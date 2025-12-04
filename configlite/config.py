@@ -53,6 +53,11 @@ class Config:
         with self.path.open("w+") as f:
             yaml.dump(defaults, f)
 
+    @property
+    def attributes(self) -> list[str]:
+        """List of attributes that are defined in this config."""
+        return [attr for attr in self._attributes.keys()]
+
 
 class DeferredValue:
     """Stub class for deferring value access."""

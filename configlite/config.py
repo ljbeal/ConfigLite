@@ -17,10 +17,20 @@ class Config:
 
         self._attributes = {}
         for k, v in self.__class__.__dict__.items():
+            if k in Config.__dict__:
+                continue
             if not k.startswith('_'):
                 self._attributes[k] = v
-                setattr(self, k, DeferredValue(self, k))
-    
+                setattr(self, k, DeferredValue(k))
+
+    def __getattribute__(self, name: str) -> Any:
+        """Proxy attribute access. If the item is deferred, return the get instead."""
+        item = object.__getattribute__(self, name)
+        if isinstance(item, DeferredValue):
+            return self.read()[item.value]
+        else:
+            return item
+
     @property
     def filename(self) -> str:
         """Filename, excluding path."""
@@ -64,20 +74,18 @@ class DeferredValue:
 
     __slots__ = ["_parent", "_value"]
 
-    def __init__(self, parent: Config, value: str) -> None:
+    def __init__(self, value: str) -> None:
         """Create the stub.
         
         Args:
             parent: The Config object that owns this value.
             value: The name of the variable to access.
         """
-        self._parent = parent
-        self._value = value
+        if not isinstance(value, str):
+            raise TypeError("Value target must be a string")
 
-    def __repr__(self) -> str:
-        """Return the representation of the object."""
-        return str(self.get())
+        self._value = value
     
-    def get(self) -> Any:
-        """Invoke a read action on the parent, and return the value."""
-        return self._parent.read()[self._value]
+    @property
+    def value(self) -> str:
+        return self._value

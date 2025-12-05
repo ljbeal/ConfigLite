@@ -54,3 +54,19 @@ def test_arbitrary_variable() -> None:
     expected_path = Path(os.getcwd()) / "config_env.yaml"
 
     assert config.abspath == expected_path
+
+
+def test_inner_dir():
+    """Tests that paths in inner directories are properly resolved."""
+    cfg = ConfigTest(path="inner/config.yaml")
+
+    assert cfg.abspath == Path(os.getcwd()) / "inner" / "config.yaml"
+
+
+def test_inner_dir_access():
+    """Tests that configs in inner directories can be accessed."""
+    cfg = ConfigTest(path="inner/config.yaml")
+
+    assert not Path("inner").exists()
+    
+    assert cfg.foo == "foo"

@@ -68,6 +68,12 @@ class BaseConfig:
         """Absolute path to the config file."""
         return self.path.resolve()
 
+    def _ensure_dir(self) -> None:
+        """Ensure that the directory for the config file exists."""
+        dir_path = self.path.parent
+        if not dir_path.exists():
+            dir_path.mkdir(parents=True, exist_ok=True)
+
     def _find_path(self) -> Path:
         """Dynamically find the path"""
         path_obj = None
@@ -81,6 +87,7 @@ class BaseConfig:
 
     def _read(self) -> dict[str, Any]:
         """Read the config file and return its contents."""
+        self._ensure_dir()
         with self.path.open("r") as f:
             return yaml.safe_load(f)
 
@@ -98,6 +105,7 @@ class BaseConfig:
         defaults = self._attributes.copy()
         if self.path.exists():
             defaults.update(self._read())
+        self._ensure_dir()
         with self.path.open("w+") as f:
             yaml.dump(defaults, f)
 

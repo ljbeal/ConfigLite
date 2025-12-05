@@ -68,5 +68,5 @@ def test_inner_dir_access():
     cfg = ConfigTest(path="inner/config.yaml")
 
     assert not Path("inner").exists()
-    
+
     assert cfg.foo == "foo"

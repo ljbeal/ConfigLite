@@ -13,3 +13,6 @@ wheels/
 .vscode
 .*/
 !.github/
+
+# config examples
+*.yaml

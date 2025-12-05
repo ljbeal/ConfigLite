@@ -16,3 +16,8 @@ wheels/
 
 # config examples
 *.yaml
+
+# Coverage reports
+.coverage
+coverage.lcov
+coverage.xml

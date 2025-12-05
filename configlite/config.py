@@ -53,6 +53,10 @@ class BaseConfig:
         else:
             return item
 
+    def __getitem__(self, key: str) -> Any:
+        """Proxy subscript access to read method."""
+        return self.read(key)
+
     @property
     def filename(self) -> str:
         """Filename, excluding path."""

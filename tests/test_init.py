@@ -44,3 +44,9 @@ def test_paths_as_paths() -> None:
 
     with pytest.raises(ValueError):
         ConfigTest(paths="config.yaml")
+
+
+def test_empty_paths():
+    """Tests that providing empty paths raises an error."""
+    with pytest.raises(ValueError):
+        ConfigTest(paths=[])

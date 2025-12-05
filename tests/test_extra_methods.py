@@ -11,6 +11,6 @@ class ConfigTest(BaseConfig):
 
 
 def test_extra_methods():
-    config = ConfigTest(path="tests/test_config.yaml")
+    config = ConfigTest(path="test.yaml")
     assert config.name == "Test_Name"
     assert config.uppercase_name == "TEST_NAME"

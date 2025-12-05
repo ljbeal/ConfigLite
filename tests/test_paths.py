@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+import pytest
 import yaml
 from configlite.config import BaseConfig
 
@@ -24,3 +25,32 @@ def test_default_to_last():
 
     assert config.path == workdir
     assert config.foo == "bar"
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "$HOME/config.yaml",
+        "~/config.yaml",
+    ]
+)
+def test_home_expansion(path: str) -> None:
+    """Tests that paths are properly expanded."""
+
+    config = ConfigTest(paths=[path])
+
+    expected_path = Path(os.path.expanduser("~")) / "config.yaml"
+
+    assert config.path == expected_path
+
+
+def test_arbitrary_variable() -> None:
+    """Tests that arbitrary environment variables are expanded."""
+
+    os.environ["CONFIGLITE_TEST_PATH"] = "config_env.yaml"
+
+    config = ConfigTest(paths=["$CONFIGLITE_TEST_PATH"])
+
+    expected_path = Path(os.getcwd()) / "config_env.yaml"
+
+    assert config.abspath == expected_path

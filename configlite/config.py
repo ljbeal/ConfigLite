@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Any
 import yaml
@@ -60,11 +61,16 @@ class BaseConfig:
         """Path to the config file."""
         return self._find_path()
 
+    @property
+    def abspath(self) -> Path:
+        """Absolute path to the config file."""
+        return self.path.resolve()
+
     def _find_path(self) -> Path:
         """Dynamically find the path"""
         path_obj = None
         for path in self._paths:
-            path_obj = Path(path)
+            path_obj = Path(os.path.expandvars(str(path))).expanduser()
             if path_obj.exists():
                 return path_obj
         if path_obj is None:

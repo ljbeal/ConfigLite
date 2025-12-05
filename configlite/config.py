@@ -37,7 +37,9 @@ class BaseConfig:
 
         self._attributes = {}
         for k, v in self.__class__.__dict__.items():
-            if k in BaseConfig.__dict__:
+            if isinstance(v, property):
+                continue
+            if hasattr(v, "__call__"):
                 continue
             if not k.startswith("_"):
                 self._attributes[k] = v

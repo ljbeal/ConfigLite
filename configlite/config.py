@@ -108,7 +108,6 @@ class DeferredValue:
         """Create the stub.
 
         Args:
-            parent: The Config object that owns this value.
             value: The name of the variable to access.
         """
         if not isinstance(value, str):

@@ -42,3 +42,15 @@ def test_home_expansion(path: str) -> None:
     expected_path = Path(os.path.expanduser("~")) / "config.yaml"
 
     assert config.path == expected_path
+
+
+def test_arbitrary_variable() -> None:
+    """Tests that arbitrary environment variables are expanded."""
+
+    os.environ["CONFIGLITE_TEST_PATH"] = "config_env.yaml"
+
+    config = ConfigTest(paths=["$CONFIGLITE_TEST_PATH"])
+
+    expected_path = Path(os.getcwd()) / "config_env.yaml"
+
+    assert config.abspath == expected_path

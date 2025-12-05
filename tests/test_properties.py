@@ -1,5 +1,3 @@
-from calendar import c
-
 import pytest
 from configlite.config import BaseConfig
 

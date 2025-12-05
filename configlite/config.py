@@ -56,7 +56,7 @@ class BaseConfig:
     @property
     def filename(self) -> str:
         """Filename, excluding path."""
-        return self._path.name
+        return self.path.name
 
     @property
     def path(self) -> Path:

@@ -8,7 +8,7 @@ def test_ensure_empty() -> None:
 def test_attributes() -> None:
     class TestConfig(Config):
         test = 10
-    
+
     assert TestConfig("test.yaml").attributes == ["test"]
 
 
@@ -17,5 +17,5 @@ def test_update(simple_config) -> None:
         yaml.dump({"test": "bar"}, o)
 
     print(type(simple_config.test))
-    
+
     assert simple_config.test == "bar"

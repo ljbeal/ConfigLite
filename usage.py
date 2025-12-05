@@ -10,7 +10,6 @@ class MyConfig(Config):
 
 
 if __name__ == "__main__":
-
     configpath = Path("config.yaml")
 
     if configpath.exists():
@@ -21,11 +20,8 @@ if __name__ == "__main__":
     print(f"context: {my_config.context}")
     print(f"name: {my_config.name}")
 
-    modified_vals = {
-        "context": 16384,
-        "name": "foo"
-    }
-    with open(configpath, 'w+') as f:
+    modified_vals = {"context": 16384, "name": "foo"}
+    with open(configpath, "w+") as f:
         yaml.dump(modified_vals, f)
 
     print(f"context: {my_config.context}")

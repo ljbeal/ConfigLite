@@ -12,6 +12,7 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     "pytest>=9.0.1",
+    "pytest-cov>=7.0.0",
     "pyyaml>=6.0.3",
 ]
 dynamic = ['version']
@@ -43,3 +44,6 @@ push = false
 "configlite/__init__.py" = [
     '^__version__ = "{version}"'
 ]
+
+[tool.pytest.ini_options]
+addopts = "--cov=configlite --cov-report term-missing --cov-report xml:coverage.xml --cov-report lcov:coverage.lcov --cov-append"

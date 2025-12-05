@@ -49,7 +49,7 @@ class BaseConfig:
         """Proxy attribute access. If the item is deferred, return the get instead."""
         item = object.__getattribute__(self, name)
         if isinstance(item, DeferredValue):
-            return self.read()[item.value]
+            return self.read(item.value)
         else:
             return item
 
@@ -91,14 +91,20 @@ class BaseConfig:
         with self.path.open("r") as f:
             return yaml.safe_load(f)
 
-    def read(self) -> dict[str, Any]:
+    def read(self, attr: str) -> Any:
         """Read the config file and return its contents.
 
         If it does not exist, creates the file and fills it with default vaulues.
         """
         if not self.path.exists():
             self.write()
-        return self._read()
+        data = self._read()
+        if attr in data:
+            return data[attr]
+        elif attr in self.attributes:
+            # Write defaults if missing
+            self.write()
+            return self._attributes[attr]
 
     def write(self) -> None:
         """Write to the config, ignoring any existing values."""

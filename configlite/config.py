@@ -61,6 +61,11 @@ class BaseConfig:
         """Path to the config file."""
         return self._find_path()
 
+    @property
+    def abspath(self) -> Path:
+        """Absolute path to the config file."""
+        return self.path.resolve()
+
     def _find_path(self) -> Path:
         """Dynamically find the path"""
         path_obj = None

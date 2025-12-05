@@ -6,13 +6,33 @@ import yaml
 class Config:
     """Lightweight Self-Healing config object."""
 
-    def __init__(self, path: Path | str) -> None:
+    def __init__(
+        self, path: Path | str | None = None, paths: list[Path | str] | None = None
+    ) -> None:
         """Initialize the config object.
 
         Args:
-           path: The path to the config file. If the file does not exist, it will be created.
+            path:
+                The path to the config file. If the file does not exist, it will be created.
+            paths:
+                A list of paths to search for the config file.
+                If it is not found in any, the last one in the list is used for creation.
         """
-        self._path = Path(path)
+        # Prioritise direct assignment
+        if path is not None:
+            # cover the case of Config(path=["a", "b"])
+            if isinstance(path, (list, tuple)):
+                self._paths = path
+            else:
+                self._paths = [path]
+        elif paths is not None:
+            if not isinstance(paths, (list, tuple)) or len(paths) == 0:
+                raise ValueError(
+                    f"`paths` (type {type(paths)}) must be a valid list of paths"
+                )
+            self._paths = paths
+        else:
+            raise ValueError("Either `path` or `paths` must be provided.")
 
         self._attributes = {}
         for k, v in self.__class__.__dict__.items():
@@ -38,7 +58,18 @@ class Config:
     @property
     def path(self) -> Path:
         """Path to the config file."""
-        return self._path
+        return self._find_path()
+
+    def _find_path(self) -> Path:
+        """Dynamically find the path"""
+        path_obj = None
+        for path in self._paths:
+            path_obj = Path(path)
+            if path_obj.exists():
+                return path_obj
+        if path_obj is None:
+            raise FileNotFoundError(f"Path list is malformed: {self._paths}")
+        return path_obj
 
     def _read(self) -> dict[str, Any]:
         """Read the config file and return its contents."""

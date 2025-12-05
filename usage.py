@@ -1,9 +1,9 @@
 from pathlib import Path
-from configlite import Config
+from configlite import BaseConfig
 import yaml
 
 
-class MyConfig(Config):
+class MyConfig(BaseConfig):
     context: int = 8192
     name: str = "test"
     pi: float = 3.14

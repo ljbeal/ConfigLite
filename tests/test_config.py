@@ -1,12 +1,12 @@
-from configlite.config import Config
+from configlite.config import BaseConfig
 import yaml
 
 def test_ensure_empty() -> None:
-    assert Config("test.yaml").attributes == []
+    assert BaseConfig("test.yaml").attributes == []
 
 
 def test_attributes() -> None:
-    class TestConfig(Config):
+    class TestConfig(BaseConfig):
         test = 10
 
     assert TestConfig("test.yaml").attributes == ["test"]

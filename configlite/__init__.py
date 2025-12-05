@@ -1,4 +1,4 @@
-from configlite.config import Config
+from configlite.config import BaseConfig
 
 
-__all__ = ["Config"]
+__all__ = ["BaseConfig"]

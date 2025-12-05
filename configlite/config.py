@@ -3,7 +3,7 @@ from typing import Any
 import yaml
 
 
-class Config:
+class BaseConfig:
     """Lightweight Self-Healing config object."""
 
     def __init__(
@@ -20,7 +20,7 @@ class Config:
         """
         # Prioritise direct assignment
         if path is not None:
-            # cover the case of Config(path=["a", "b"])
+            # cover the case of BaseConfig(path=["a", "b"])
             if isinstance(path, (list, tuple)):
                 self._paths = path
             else:
@@ -36,7 +36,7 @@ class Config:
 
         self._attributes = {}
         for k, v in self.__class__.__dict__.items():
-            if k in Config.__dict__:
+            if k in BaseConfig.__dict__:
                 continue
             if not k.startswith("_"):
                 self._attributes[k] = v

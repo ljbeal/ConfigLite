@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from configlite.config import Config
+from configlite.config import BaseConfig
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -11,6 +11,6 @@ def use_temp_dir(tmpdir):
 
 @pytest.fixture(scope="function")
 def simple_config():
-    class SimpleConfig(Config):
+    class SimpleConfig(BaseConfig):
         test = "foo"
     return SimpleConfig("test.yaml")

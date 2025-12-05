@@ -2,7 +2,7 @@
 
 A lightweight self-healing config handler.
 
-Subclass from the base `Config` object and add your variables and defaults.
+Subclass from the base `BaseConfig` object and add your variables and defaults.
 
 You can then set import this from wherever is needed and access properties.
 
@@ -15,15 +15,15 @@ You can then set import this from wherever is needed and access properties.
 ## Examples
 
 ### Setup
-Create a subclass of the base `Config` object, adding your parameters and their defaults.
+Create a subclass of the base `BaseConfig` object, adding your parameters and their defaults.
 
 For example:
 
 ```python
-from configlite import Config
+from configlite import BaseConfig
 
 
-class MyConfig(Config):
+class MyConfig(BaseConfig):
     value: int = 10
     name: str = "test"
     pi: float = 3.14

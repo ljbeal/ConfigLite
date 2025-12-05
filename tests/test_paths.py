@@ -2,9 +2,9 @@ import os
 from pathlib import Path
 
 import yaml
-from configlite.config import Config
+from configlite.config import BaseConfig
 
-class ConfigTest(Config):
+class ConfigTest(BaseConfig):
     foo: str = "foo"
 
 

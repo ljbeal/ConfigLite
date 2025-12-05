@@ -66,5 +66,7 @@ def test_inner_dir():
 def test_inner_dir_access():
     """Tests that configs in inner directories can be accessed."""
     cfg = ConfigTest(path="inner/config.yaml")
+
+    assert not Path("inner").exists()
     
     assert cfg.foo == "foo"

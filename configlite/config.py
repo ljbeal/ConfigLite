@@ -93,7 +93,10 @@ class BaseConfig:
         """Read the config file and return its contents."""
         self._ensure_dir()
         with self.path.open("r") as f:
-            return yaml.safe_load(f)
+            data = yaml.safe_load(f)
+        if data is not None:
+            return data
+        return {}
 
     def read(self, attr: str) -> Any:
         """Read the config file and return its contents.

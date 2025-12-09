@@ -74,7 +74,7 @@ def test_inner_dir_access():
 
 def test_malformed_paths():
     """Tests that malformed paths raise an error.
-    
+
     This is a rare condition that requires some level of clobbering,
     but we test it to make pylance happy.
     """

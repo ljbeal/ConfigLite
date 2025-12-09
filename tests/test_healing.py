@@ -58,7 +58,7 @@ def test_delete_variable():
 
     # get the file content for modification
     with file.open() as o:
-        data = yaml.safe_load(o)    
+        data = yaml.safe_load(o)
         assert data["foo"] == "foo"
     # delete foo and write the changes
     del data["foo"]

@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Any
 
@@ -17,7 +18,7 @@ def verify_variable(file: Path, name: str, value: Any) -> bool:
     return data.get(name, None) == value
 
 
-def test_restore_file():
+def test_restore_file(capsys):
     file = Path("test.yaml")
 
     config = ConfigTest(file)
@@ -25,9 +26,26 @@ def test_restore_file():
     with file.open("w+") as o:
         o.write("")  # create an empty file
 
-    
     assert config.foo == "foo"
     assert config.val == 10
+
+    assert os.path.exists(f"{file}.bk")
+    assert "WARNING" in capsys.readouterr().out
+
+
+def test_mangled_file(capsys):
+    file = Path("test.yaml")
+
+    config = ConfigTest(file)
+
+    with file.open("w+") as o:
+        o.write("foo")  # create a broken file
+
+    assert config.foo == "foo"
+    assert config.val == 10
+
+    assert os.path.exists(f"{file}.bk")
+    assert "WARNING" in capsys.readouterr().out
 
 
 def test_delete_variable():

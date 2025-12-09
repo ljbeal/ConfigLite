@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import shutil
 from typing import Any
 import yaml
 
@@ -93,7 +94,19 @@ class BaseConfig:
         """Read the config file and return its contents."""
         self._ensure_dir()
         with self.path.open("r") as f:
-            return yaml.safe_load(f)
+            data = yaml.safe_load(f)
+        if isinstance(data, dict):
+            return data
+        backup_name = f"{self.filename}.bk"
+        print(f"WARNING: Config file {self.path} failed to load. Backing up the file to: {backup_name}...", end = " ")
+        try:
+            shutil.move(self.abspath, backup_name)
+        except:
+            print("Error.")
+            raise
+        else:
+            print("Done.")
+        return {}
 
     def read(self, attr: str) -> Any:
         """Read the config file and return its contents.

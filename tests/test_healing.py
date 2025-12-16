@@ -12,6 +12,20 @@ class ConfigTest(BaseConfig):
 
 
 def verify_variable(file: Path, name: str, value: Any) -> bool:
+    """Verify that a variable in the config file has the expected value.
+
+    Args:
+        file:
+            The path to the config file.
+        name:
+            The name of the variable to check.
+        value:
+            The expected value of the variable.
+
+    Returns:
+        True if the variable has the expected value, False otherwise.
+
+    """
     with file.open() as o:
         data = yaml.safe_load(o)
 
@@ -32,6 +46,25 @@ def test_restore_file(capsys):
     assert os.path.exists(f"{file}.bk")
     assert "WARNING" in capsys.readouterr().out
 
+    assert verify_variable(file, "foo", "foo")
+
+
+def test_restore_file_priority(capsys):
+    file_a = Path("test_a.yaml")
+    file_b = Path("test_b.yaml")
+
+    config = ConfigTest(paths=[file_a, file_b])
+
+    with file_a.open("w+") as o:
+        o.write("")  # create an empty file
+
+    assert config.foo == "foo"
+    assert config.val == 10
+
+    assert os.path.exists(f"{file_a}.bk")
+    assert "WARNING" in capsys.readouterr().out
+
+    assert verify_variable(file_a, "foo", "foo")
 
 def test_mangled_file(capsys):
     file = Path("test.yaml")

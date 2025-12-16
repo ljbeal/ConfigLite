@@ -97,19 +97,21 @@ class BaseConfig:
             data = yaml.safe_load(f)
         if isinstance(data, dict):
             return data
+        # In the case of a broken file, back it up and create a default one
+        target_path = self.path
         backup_name = f"{self.filename}.bk"
         print(
-            f"WARNING: Config file {self.path} failed to load. Backing up the file to: {backup_name}...",
+            f"WARNING: Config file {target_path} failed to load.\n\tBacking up the file to: {backup_name}...",
             end=" ",
         )
         try:
-            shutil.move(self.abspath, backup_name)
+            shutil.move(target_path, backup_name)
         except:
             print("Error.")
             raise
-        else:
-            print("Done.")
-        return {}
+
+        print("Done.")
+        return self.write(path=Path(target_path))
 
     def read(self, attr: str) -> Any:
         """Read the config file and return its contents.
@@ -126,14 +128,18 @@ class BaseConfig:
             self.write()
             return self._attributes[attr]
 
-    def write(self) -> None:
+    def write(self, path: Path | None = None) -> dict[str, Any]:
         """Write to the config, ignoring any existing values."""
+        if path is None:
+            path = self.abspath
+
         defaults = self._attributes.copy()
-        if self.path.exists():
+        if path.exists():
             defaults.update(self._read())
         self._ensure_dir()
-        with self.path.open("w+") as f:
+        with path.open("w+") as f:
             yaml.dump(defaults, f)
+        return defaults
 
     @property
     def attributes(self) -> list[str]:

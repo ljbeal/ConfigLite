@@ -46,6 +46,9 @@ class BaseConfig:
                 self._attributes[k] = v
                 setattr(self, k, DeferredValue(k))
 
+        if self.path.exists():
+            self._ensure_file_integrity()
+
     def __getattribute__(self, name: str) -> Any:
         """Proxy attribute access. If the item is deferred, return the get instead."""
         item = object.__getattribute__(self, name)
@@ -78,6 +81,23 @@ class BaseConfig:
         dir_path = self.path.parent
         if not dir_path.exists():
             dir_path.mkdir(parents=True, exist_ok=True)
+
+    def _ensure_file_integrity(self) -> bool:
+        """Ensure that all attributes are present in the config file."""
+        # if the file does not exist, we can get away with just writing the defaults
+        if not self.path.exists():
+            self.write()
+            return True
+
+        data = self._read()
+        modified = False
+        for attr, default in self._attributes.items():
+            if attr not in data:
+                data[attr] = default
+                modified = True
+        if modified:
+            self.write()
+        return modified
 
     def _find_path(self) -> Path:
         """Dynamically find the path"""
@@ -118,15 +138,9 @@ class BaseConfig:
 
         If it does not exist, creates the file and fills it with default vaulues.
         """
-        if not self.path.exists():
-            self.write()
+        self._ensure_file_integrity()
         data = self._read()
-        if attr in data:
-            return data[attr]
-        elif attr in self.attributes:
-            # Write defaults if missing
-            self.write()
-            return self._attributes[attr]
+        return data.get(attr)
 
     def write(self, path: Path | None = None) -> dict[str, Any]:
         """Write to the config, ignoring any existing values."""

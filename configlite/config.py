@@ -61,6 +61,14 @@ class BaseConfig:
         """Proxy subscript access to read method."""
         return self.read(key)
 
+    def get(self, key: str, default: Any | None = None) -> Any:
+        """Expose the python `get` property."""
+        if key in self.attributes:
+            return self[key]
+        if default is not None:
+            return default
+        raise KeyError(f"Key '{key}' not found in Config!")
+
     @property
     def filename(self) -> str:
         """Filename, excluding path."""

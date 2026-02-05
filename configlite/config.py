@@ -91,20 +91,36 @@ class BaseConfig:
             dir_path.mkdir(parents=True, exist_ok=True)
 
     def _ensure_file_integrity(self) -> bool:
-        """Ensure that all attributes are present in the config file."""
+        """Ensure that all attributes are present in the config file.
+
+        Returns:
+            bool: True if changes were made, False otherwise.
+
+        """
         # if the file does not exist, we can get away with just writing the defaults
         if not self.path.exists():
             self.write()
             return True
 
-        data = self._read()
+        file_data = self._read()
+        # remove deleted/renamed keys
         modified = False
+        # need to first store targeted names and then iterate
+        to_remove = []
+        for key in file_data:
+            if key not in self.attributes:
+                to_remove.append(key)
+        for key in to_remove:
+            del file_data[key]
+            modified = True
+        # ensure missing keys are populated
         for attr, default in self._attributes.items():
-            if attr not in data:
-                data[attr] = default
+            if attr not in file_data:
+                file_data[attr] = default
                 modified = True
+        # if we made changes, write them
         if modified:
-            self.write()
+            self._write(file_data, self.abspath)
         return modified
 
     def _find_path(self) -> Path:
@@ -150,6 +166,13 @@ class BaseConfig:
         data = self._read()
         return data.get(attr)
 
+    def _write(self, data: dict[str, Any], path: Path) -> dict[str, Any]:
+        """Explicitly write data to path."""
+        with path.open("w") as o:
+            yaml.dump(data, o)
+
+        return data
+
     def write(self, path: Path | None = None) -> dict[str, Any]:
         """Write to the config, ignoring any existing values."""
         if path is None:
@@ -159,8 +182,7 @@ class BaseConfig:
         if path.exists():
             defaults.update(self._read())
         self._ensure_dir()
-        with path.open("w+") as f:
-            yaml.dump(defaults, f)
+        self._write(data=defaults, path=path)
         return defaults
 
     @property

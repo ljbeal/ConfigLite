@@ -105,6 +105,25 @@ def test_delete_variable():
     assert verify_variable(file, "foo", "foo")
 
 
+def test_remove_variable():
+    """Test that modifying the config updates the file correctly."""
+    class ConfigTest_1(BaseConfig):
+        foo: str = "foo"
+        bar: str = "bar"
+
+    class ConfigTest_2(BaseConfig):
+        foo: str = "foo"
+
+    cfg = ConfigTest_1("test.yaml")
+    assert cfg.foo == "foo"
+    assert verify_variable(cfg.path, "foo", "foo")
+    assert verify_variable(cfg.path, "bar", "bar")
+
+    cfg = ConfigTest_2("test.yaml")
+    assert verify_variable(cfg.path, "foo", "foo")
+    assert not verify_variable(cfg.path, "bar", "bar")
+
+
 def test_modify_variable():
     """Test that modifying the config updates the file correctly."""
     class ConfigTest_1(BaseConfig):

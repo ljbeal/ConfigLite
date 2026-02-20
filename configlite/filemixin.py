@@ -61,33 +61,11 @@ class FileMixin:
             bool: True if changes were made, False otherwise.
 
         """
-        print("Ensuring file integrity")
         # if the file does not exist, we can get away with just writing the defaults
         if not self.path.exists():
-            print("file does not exist, writing defaults")
             self._write(data=self.defaults, path=self.abspath)
             return True
-
         file_data = self._read()
-        print("Existing data:", file_data)
-
-        if not file_data:
-            # In the case of a broken file, back it up and create a default one
-            target_path = self.path
-            backup_name = f"{self.filename}.bk"
-            print(
-                f"WARNING: Config file {target_path} failed to load.\n\tBacking up the file to: {backup_name}...",
-                end=" ",
-            )
-            try:
-                shutil.move(target_path, backup_name)
-            except:
-                print("Error.")
-                raise
-
-            print("Done.")
-            file_data = self._write(self.defaults, self.abspath)
-
         # remove deleted/renamed keys
         modified = False
         # need to first store targeted names and then iterate

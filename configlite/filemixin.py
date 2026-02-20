@@ -1,0 +1,148 @@
+import os
+from pathlib import Path
+import shutil
+from typing import Any
+
+import yaml
+
+
+class FileMixin:
+    defaults = NotImplemented
+
+    def __init__(
+        self,
+        path: Path | str | None = None,
+        paths: list[Path | str] | None = None,
+    ) -> None:
+        # Prioritise direct assignment
+        if path is not None:
+            # cover the case of BaseConfig(path=["a", "b"])
+            if isinstance(path, (list, tuple)):
+                self._paths = path
+            else:
+                self._paths = [path]
+        elif paths is not None:
+            if not isinstance(paths, (list, tuple)) or len(paths) == 0:
+                raise ValueError(
+                    f"`paths` (type {type(paths)}) must be a valid list of paths"
+                )
+            self._paths = paths
+        else:
+            raise ValueError("Either `path` or `paths` must be provided.")
+
+    @property
+    def filename(self) -> str:
+        """Filename, excluding path."""
+        return self.path.name
+
+    @property
+    def path(self) -> Path:
+        """Path to the config file."""
+        return self._find_path()
+
+    @property
+    def abspath(self) -> Path:
+        """Absolute path to the config file."""
+        return self.path.resolve()
+
+    def _ensure_dir(self) -> None:
+        """Ensure that the directory for the config file exists."""
+        dir_path = self.path.parent
+        if not dir_path.exists():
+            dir_path.mkdir(parents=True, exist_ok=True)
+
+    def _ensure_file_integrity(self) -> bool:
+        """Ensure that all attributes are present in the config file.
+
+        Returns:
+            bool: True if changes were made, False otherwise.
+
+        """
+        print("Ensuring file integrity")
+        # if the file does not exist, we can get away with just writing the defaults
+        if not self.path.exists():
+            print("file does not exist, writing defaults")
+            self._write(data=self.defaults, path=self.abspath)
+            return True
+
+        file_data = self._read()
+        print("Existing data:", file_data)
+
+        if not file_data:
+            # In the case of a broken file, back it up and create a default one
+            target_path = self.path
+            backup_name = f"{self.filename}.bk"
+            print(
+                f"WARNING: Config file {target_path} failed to load.\n\tBacking up the file to: {backup_name}...",
+                end=" ",
+            )
+            try:
+                shutil.move(target_path, backup_name)
+            except:
+                print("Error.")
+                raise
+
+            print("Done.")
+            file_data = self._write(self.defaults, self.abspath)
+
+        # remove deleted/renamed keys
+        modified = False
+        # need to first store targeted names and then iterate
+        to_remove = []
+        for key in file_data:
+            if key not in self.defaults:
+                to_remove.append(key)
+        for key in to_remove:
+            del file_data[key]
+            modified = True
+        # ensure missing keys are populated
+        for attr, default in self.defaults.items():
+            if attr not in file_data:
+                file_data[attr] = default
+                modified = True
+        # if we made changes, write them
+        if modified:
+            self._write(file_data, self.abspath)
+        return modified
+
+    def _find_path(self) -> Path:
+        """Dynamically find the path"""
+        path_obj = None
+        for path in self._paths:
+            path_obj = Path(os.path.expandvars(str(path))).expanduser()
+            if path_obj.exists():
+                return path_obj
+        if path_obj is None:
+            raise FileNotFoundError(f"Path list is malformed: {self._paths}")
+        return path_obj
+
+    def _read(self) -> dict[str, Any]:
+        """Read the config file and return its contents."""
+        self._ensure_dir()
+        with self.path.open("r") as f:
+            data = yaml.safe_load(f)
+        if isinstance(data, dict):
+            return data
+        # In the case of a broken file, back it up and create a default one
+        target_path = self.path
+        backup_name = f"{self.filename}.bk"
+        print(
+            f"WARNING: Config file {target_path} failed to load.\n\tBacking up the file to: {backup_name}...",
+            end=" ",
+        )
+        try:
+            shutil.move(target_path, backup_name)
+        except:
+            print("Error.")
+            raise
+
+        print("Done.")
+        return self._write(data=self.defaults, path=Path(target_path))
+
+    def _write(self, data: dict[str, Any], path: Path) -> dict[str, Any]:
+        """Explicitly write data to path."""
+        self._ensure_dir()
+        with path.open("w") as o:
+            yaml.dump(data, o)
+
+        return data

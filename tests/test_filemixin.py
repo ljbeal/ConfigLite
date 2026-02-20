@@ -52,3 +52,10 @@ def test_malformed_paths():
     config._paths = []
     with pytest.raises(FileNotFoundError):
         config.path
+
+
+def test_path_stacking():
+    """Check that specifying both path and paths creates a list."""
+    config = FileMixin(path="1", paths=["2", "3"])
+
+    assert config._paths == ["1", "2", "3"]

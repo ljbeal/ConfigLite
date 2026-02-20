@@ -14,21 +14,24 @@ class FileMixin:
         path: Path | str | None = None,
         paths: list[Path | str] | None = None,
     ) -> None:
+        if not path and not paths:
+            raise ValueError("Either `path` or `paths` must be provided.")
+
         # Prioritise direct assignment
+        self._paths = []
         if path is not None:
             # cover the case of BaseConfig(path=["a", "b"])
             if isinstance(path, (list, tuple)):
-                self._paths = path
+                self._paths.extend(path)
             else:
-                self._paths = [path]
-        elif paths is not None:
+                self._paths.append(path)
+
+        if paths is not None:
             if not isinstance(paths, (list, tuple)) or len(paths) == 0:
                 raise ValueError(
                     f"`paths` (type {type(paths)}) must be a valid list of paths"
                 )
-            self._paths = paths
-        else:
-            raise ValueError("Either `path` or `paths` must be provided.")
+            self._paths.extend(paths)
 
     @property
     def filename(self) -> str:

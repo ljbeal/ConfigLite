@@ -192,7 +192,16 @@ class BaseConfig:
 
 
 class DeferredValue:
-    """Stub class for deferring value access."""
+    """Stub class for deferring value access to a file read.
+
+    Interacts with `__getattribute__` to "defer" reads to file.
+    In Config, we first use the base object.__getattribute__(...) to collect an arbitrary item
+    If that item has been replaced by a `DeferredValue` object, then we read from file
+    Otherwise, return  the item
+
+    Args:
+        value (str): The name of the variable to access.
+    """
 
     __slots__ = ["_parent", "_value"]
 

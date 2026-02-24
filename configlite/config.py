@@ -7,6 +7,8 @@ from configlite.filemixin import FileMixin
 class BaseConfig(FileMixin):
     """Lightweight Self-Healing config object."""
 
+    defaults: dict[str, Any] = {}
+
     def __init__(
         self, path: Path | str | None = None, paths: list[Path | str] | None = None
     ) -> None:
@@ -20,27 +22,22 @@ class BaseConfig(FileMixin):
                 If it is not found in any, the last one in the list is used for creation.
         """
         super().__init__(path=path, paths=paths)
-
-        self._attributes = {}
-        for k, v in self.__class__.__dict__.items():
-            if isinstance(v, property):
-                continue
-            if hasattr(v, "__call__"):
-                continue
-            if not k.startswith("_"):
-                self._attributes[k] = v
-                setattr(self, k, DeferredValue(k))
+        # init with the hardcoded defaults
+        self.data = self.defaults.copy()
 
         if self.path.exists():
             self._ensure_file_integrity()
 
     def __getattribute__(self, name: str) -> Any:
         """Proxy attribute access. If the item is deferred, return the get instead."""
-        item = object.__getattribute__(self, name)
-        if isinstance(item, DeferredValue):
-            return self.read(item.value)
+        if (
+            name not in ["attributes", "defaults"]
+            and hasattr(self, "defaults")
+            and name in self.defaults
+        ):
+            return self.read(name)
         else:
-            return item
+            return object.__getattribute__(self, name)
 
     def __getitem__(self, key: str) -> Any:
         """Proxy subscript access to read method."""
@@ -49,7 +46,7 @@ class BaseConfig(FileMixin):
     def get(self, key: str, default: Any | None = None) -> Any:
         """Expose the python `get` property."""
         if key in self.attributes:
-            return self[key]
+            return self.read(key)
         if default is not None:
             return default
         raise KeyError(f"Key '{key}' not found in Config!")
@@ -77,11 +74,7 @@ class BaseConfig(FileMixin):
     @property
     def attributes(self) -> list[str]:
         """List of attributes that are defined in this config."""
-        return [attr for attr in self._attributes.keys()]
-
-    @property
-    def defaults(self) -> dict[str, Any]:
-        return self._attributes.copy()
+        return list(self.data)
 
 
 class DeferredValue:

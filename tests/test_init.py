@@ -4,7 +4,9 @@ from configlite.config import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    foo: str = "foo"
+    defaults = {
+        "foo": "foo",
+    }
 
 
 def test_no_args() -> None:

@@ -3,18 +3,24 @@ from configlite.config import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    foo: str = "foo"
+    defaults = {
+        "foo": "foo",
+    }
 
 
 class ConfigWithMethods(BaseConfig):
-    foo: str = "foo"
+    defaults = {
+        "foo": "foo",
+    }
 
     def some_method(self) -> str:
         return "bar"
 
 
 class ConfigWithProperty(BaseConfig):
-    foo: str = "foo"
+    defaults = {
+        "foo": "foo",
+    }
 
     @property
     def some_property(self) -> str:

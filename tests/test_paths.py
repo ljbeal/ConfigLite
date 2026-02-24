@@ -1,12 +1,14 @@
 import os
 from pathlib import Path
 
-import pytest
 import yaml
 from configlite.config import BaseConfig
 
+
 class ConfigTest(BaseConfig):
-    foo: str = "foo"
+    defaults = {
+        "foo": "foo",
+    }
 
 
 def test_default_to_last():

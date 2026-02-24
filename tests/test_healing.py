@@ -7,8 +7,10 @@ from configlite.config import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    foo: str = "foo"
-    val: int = 10
+    defaults = {
+        "foo": "foo",
+        "val": 10,
+    }
 
 
 def verify_variable(file: Path, name: str, value: Any) -> bool:
@@ -108,11 +110,15 @@ def test_delete_variable():
 def test_remove_variable():
     """Test that modifying the config updates the file correctly."""
     class ConfigTest_1(BaseConfig):
-        foo: str = "foo"
-        bar: str = "bar"
+        defaults = {
+            "foo": "foo",
+            "bar": "bar",
+        }
 
     class ConfigTest_2(BaseConfig):
-        foo: str = "foo"
+        defaults = {
+            "foo": "foo",
+        }
 
     cfg = ConfigTest_1("test.yaml")
     assert cfg.foo == "foo"
@@ -127,11 +133,15 @@ def test_remove_variable():
 def test_modify_variable():
     """Test that modifying the config updates the file correctly."""
     class ConfigTest_1(BaseConfig):
-        foo: str = "foo"
+        defaults = {
+            "foo": "foo",
+        }
 
     class ConfigTest_2(BaseConfig):
-        foo: str = "foo"
-        new: str = "new_value"
+        defaults = {
+            "foo": "foo",
+            "new": "new_value",
+        }
 
     cfg = ConfigTest_1("test.yaml")
     assert cfg.foo == "foo"

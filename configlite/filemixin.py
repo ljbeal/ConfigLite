@@ -11,7 +11,7 @@ class FileMixin:
 
     def __init__(
         self,
-        path: Path | str | None = None,
+        path: Path | str | list[Path | str] | None = None,
         paths: list[Path | str] | None = None,
     ) -> None:
         if not path and not paths:

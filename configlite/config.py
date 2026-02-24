@@ -10,7 +10,9 @@ class BaseConfig(FileMixin):
     defaults: dict[str, Any] = {}
 
     def __init__(
-        self, path: Path | str | None = None, paths: list[Path | str] | None = None
+        self,
+        path: Path | str | list[Path | str] | None = None,
+        paths: list[Path | str] | None = None,
     ) -> None:
         """Initialize the config object.
 

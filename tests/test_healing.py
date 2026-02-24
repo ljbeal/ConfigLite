@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
-from typing import Any
 
 import yaml
 from configlite.config import BaseConfig
+from .conftest import verify_variable
 
 
 class ConfigTest(BaseConfig):
@@ -11,27 +11,6 @@ class ConfigTest(BaseConfig):
         "foo": "foo",
         "val": 10,
     }
-
-
-def verify_variable(file: Path, name: str, value: Any) -> bool:
-    """Verify that a variable in the config file has the expected value.
-
-    Args:
-        file:
-            The path to the config file.
-        name:
-            The name of the variable to check.
-        value:
-            The expected value of the variable.
-
-    Returns:
-        True if the variable has the expected value, False otherwise.
-
-    """
-    with file.open() as o:
-        data = yaml.safe_load(o)
-
-    return data.get(name, None) == value
 
 
 def test_restore_file(capsys):

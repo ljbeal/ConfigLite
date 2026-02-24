@@ -7,6 +7,8 @@ import yaml
 
 
 class FileMixin:
+    """Mixin class for handling file operations."""
+
     defaults = NotImplemented
 
     def __init__(
@@ -14,6 +16,15 @@ class FileMixin:
         path: Path | str | list[Path | str] | None = None,
         paths: list[Path | str] | None = None,
     ) -> None:
+        """Provides methods for handling the file portion of the config.
+
+        Args:
+            path:
+                The path to the config file. If the file does not exist, it will be created.
+            paths:
+                A list of paths to search for the config file.
+                If it is not found in any, the last one in the list is used for creation.
+        """
         if not path and not paths:
             raise ValueError("Either `path` or `paths` must be provided.")
 

@@ -9,7 +9,7 @@ import yaml
 class FileMixin:
     """Mixin class for handling file operations."""
 
-    defaults = NotImplemented
+    data = {}
 
     def __init__(
         self,
@@ -74,7 +74,7 @@ class FileMixin:
         """
         # if the file does not exist, we can get away with just writing the defaults
         if not self.path.exists():
-            self._write(data=self.defaults, path=self.abspath)
+            self._write(data=self.data, path=self.abspath)
             return True
         file_data = self._read()
         # remove deleted/renamed keys
@@ -82,13 +82,13 @@ class FileMixin:
         # need to first store targeted names and then iterate
         to_remove = []
         for key in file_data:
-            if key not in self.defaults:
+            if key not in self.data:
                 to_remove.append(key)
         for key in to_remove:
             del file_data[key]
             modified = True
         # ensure missing keys are populated
-        for attr, default in self.defaults.items():
+        for attr, default in self.data.items():
             if attr not in file_data:
                 file_data[attr] = default
                 modified = True
@@ -129,7 +129,7 @@ class FileMixin:
             raise
 
         print("Done.")
-        return self._write(data=self.defaults, path=Path(target_path))
+        return self._write(data=self.data, path=Path(target_path))
 
     def _write(self, data: dict[str, Any], path: Path) -> dict[str, Any]:
         """Explicitly write data to path."""

@@ -58,3 +58,23 @@ def test_file_adoption() -> None:
     assert cfg.foo == "bar"
     assert cfg["foo"] == "bar"
     assert verify_variable(file, "foo", "bar")
+
+
+def test_init_with_modified_defaults() -> None:
+    """Tests that providing modified defaults works."""
+    file = Path("config.yaml")
+    cfg = ConfigTest(path=file, defaults={"foo": "bar"})
+
+    assert cfg.foo == "bar"
+    assert cfg["foo"] == "bar"
+    assert verify_variable(file, "foo", "bar")
+
+
+def test_init_with_extra_defaults() -> None:
+    """Tests that providing extra defaults works."""
+    file = Path("config.yaml")
+    cfg = ConfigTest(path=file, defaults={"foo": "bar", "new": "new"})
+
+    assert cfg.new == "new"
+    assert cfg["new"] == "new"
+    assert verify_variable(file, "new", "new")

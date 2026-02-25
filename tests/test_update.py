@@ -2,13 +2,15 @@ from configlite.config import BaseConfig
 
 
 class ConfigA(BaseConfig):
-    param1: str = "value1"
+    defaults = {"param1": "value1"}
 
 
 class ConfigB(BaseConfig):
     """Simulate updating the config to include a new parameter."""
-    param1: str = "value1"
-    param2: str = "value2"
+    defaults = {
+        "param1": "value1",
+        "param2": "value2",
+    }
 
 
 def test_update_config():

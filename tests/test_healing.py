@@ -1,35 +1,16 @@
 import os
 from pathlib import Path
-from typing import Any
 
 import yaml
 from configlite.config import BaseConfig
+from .conftest import verify_variable
 
 
 class ConfigTest(BaseConfig):
-    foo: str = "foo"
-    val: int = 10
-
-
-def verify_variable(file: Path, name: str, value: Any) -> bool:
-    """Verify that a variable in the config file has the expected value.
-
-    Args:
-        file:
-            The path to the config file.
-        name:
-            The name of the variable to check.
-        value:
-            The expected value of the variable.
-
-    Returns:
-        True if the variable has the expected value, False otherwise.
-
-    """
-    with file.open() as o:
-        data = yaml.safe_load(o)
-
-    return data.get(name, None) == value
+    defaults = {
+        "foo": "foo",
+        "val": 10,
+    }
 
 
 def test_restore_file(capsys):
@@ -108,11 +89,15 @@ def test_delete_variable():
 def test_remove_variable():
     """Test that modifying the config updates the file correctly."""
     class ConfigTest_1(BaseConfig):
-        foo: str = "foo"
-        bar: str = "bar"
+        defaults = {
+            "foo": "foo",
+            "bar": "bar",
+        }
 
     class ConfigTest_2(BaseConfig):
-        foo: str = "foo"
+        defaults = {
+            "foo": "foo",
+        }
 
     cfg = ConfigTest_1("test.yaml")
     assert cfg.foo == "foo"
@@ -127,11 +112,15 @@ def test_remove_variable():
 def test_modify_variable():
     """Test that modifying the config updates the file correctly."""
     class ConfigTest_1(BaseConfig):
-        foo: str = "foo"
+        defaults = {
+            "foo": "foo",
+        }
 
     class ConfigTest_2(BaseConfig):
-        foo: str = "foo"
-        new: str = "new_value"
+        defaults = {
+            "foo": "foo",
+            "new": "new_value",
+        }
 
     cfg = ConfigTest_1("test.yaml")
     assert cfg.foo == "foo"

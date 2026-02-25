@@ -1,21 +1,30 @@
 from configlite.config import BaseConfig
 import yaml
 
+
+class ConfigTest(BaseConfig):
+    defaults = {
+        "test": "foo",
+    }
+
 def test_ensure_empty() -> None:
     assert BaseConfig("test.yaml").attributes == []
 
 
 def test_attributes() -> None:
     class TestConfig(BaseConfig):
-        test = 10
+        defaults = {"test": 10}
 
     assert TestConfig("test.yaml").attributes == ["test"]
 
 
-def test_update(simple_config) -> None:
-    with open("test.yaml", "w+") as o:
+def test_update() -> None:
+    config = ConfigTest("test.yaml")
+
+    with open(config.abspath, "w+") as o:
         yaml.dump({"test": "bar"}, o)
 
-    print(type(simple_config.test))
+    print(type(config.test))
 
-    assert simple_config.test == "bar"
+    assert config.test == "bar"
+    assert config.get("test") == "bar"

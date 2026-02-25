@@ -7,13 +7,24 @@ import yaml
 
 
 class FileMixin:
-    defaults = NotImplemented
+    """Mixin class for handling file operations."""
+
+    data = {}
 
     def __init__(
         self,
-        path: Path | str | None = None,
+        path: Path | str | list[Path | str] | None = None,
         paths: list[Path | str] | None = None,
     ) -> None:
+        """Provides methods for handling the file portion of the config.
+
+        Args:
+            path:
+                The path to the config file. If the file does not exist, it will be created.
+            paths:
+                A list of paths to search for the config file.
+                If it is not found in any, the last one in the list is used for creation.
+        """
         if not path and not paths:
             raise ValueError("Either `path` or `paths` must be provided.")
 
@@ -63,7 +74,7 @@ class FileMixin:
         """
         # if the file does not exist, we can get away with just writing the defaults
         if not self.path.exists():
-            self._write(data=self.defaults, path=self.abspath)
+            self._write(data=self.data, path=self.abspath)
             return True
         file_data = self._read()
         # remove deleted/renamed keys
@@ -71,13 +82,13 @@ class FileMixin:
         # need to first store targeted names and then iterate
         to_remove = []
         for key in file_data:
-            if key not in self.defaults:
+            if key not in self.data:
                 to_remove.append(key)
         for key in to_remove:
             del file_data[key]
             modified = True
         # ensure missing keys are populated
-        for attr, default in self.defaults.items():
+        for attr, default in self.data.items():
             if attr not in file_data:
                 file_data[attr] = default
                 modified = True
@@ -118,7 +129,7 @@ class FileMixin:
             raise
 
         print("Done.")
-        return self._write(data=self.defaults, path=Path(target_path))
+        return self._write(data=self.data, path=Path(target_path))
 
     def _write(self, data: dict[str, Any], path: Path) -> dict[str, Any]:
         """Explicitly write data to path."""

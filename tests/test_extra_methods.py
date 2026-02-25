@@ -2,8 +2,10 @@ from configlite.config import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    test_value: int = 42
-    name: str = "Test_Name"
+    defaults = {
+        "test_value": 42,
+        "name": "Test_Name",
+    }
 
     @property
     def uppercase_name(self) -> str:

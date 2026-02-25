@@ -34,17 +34,11 @@ def test_paths_as_empty_list() -> None:
         ConfigTest(paths=[])
 
 
-def test_paths_as_paths() -> None:
-    """Tests that providing paths as a valid list works."""
+def test_path_as_paths() -> None:
+    """Tests that providing path in place of paths raises an error."""
 
     with pytest.raises(ValueError):
-        ConfigTest(paths="config.yaml")
-
-
-def test_empty_paths():
-    """Tests that providing empty paths raises an error."""
-    with pytest.raises(ValueError):
-        ConfigTest(paths=[])
+        ConfigTest(paths="config.yaml")  # type: ignore
 
 
 def test_file_adoption() -> None:

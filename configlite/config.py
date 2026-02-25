@@ -56,7 +56,6 @@ class BaseConfig(FileMixin):
         Otherwise, the default value is returned. If no default is provided, a KeyError is raised.
         """
         # prefer file read
-        print(f"get: {key}")
         if self.abspath.exists():
             self._ensure_file_integrity()
 

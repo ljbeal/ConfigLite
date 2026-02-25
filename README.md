@@ -11,24 +11,57 @@ You can then set import this from wherever is needed and access properties.
 
 ## Installation
 
-`git clone` this repository, then use `pip install .` to install it in your current environment.
+### pypi
 
+`ConfigLite` is available on pypi!
+
+Simply run `pip install configlite` to install it in your current environment.
+
+### development
+
+If you want to make changes to how configs are handled, you can clone this repo and run `pip install -e .` to install it in editable mode.
 
 ## Usage
 
 ### Creating a Config
-Create a subclass of the base `BaseConfig` object, adding your parameters and their defaults.
 
-For example:
+There are two methods of creating a config object.
+#### Direct Initialisation
+The simplest method to create a config, simply init the `BaseConfig` class and provide your defaults as an argument:
 
 ```python
 from configlite import BaseConfig
 
 
+CONFIG = BaseConfig(
+    path = "config.yaml",
+    defaults = {
+        "value": 10,
+        ...
+    }
+)
+
+```
+
+#### As a Class
+If you wish to add extra methods, create a subclass of the base `BaseConfig` object, adding your parameters and their defaults to a `defaults` field.
+
+For example:
+```python
+from configlite import BaseConfig
+
+
 class MyConfig(BaseConfig):
-    value: int = 10
-    name: str = "test"
-    pi: float = 3.14
+    defaults = {
+        "value": 10,
+        "name": "test",
+        "pi": 3.14,
+    }
+```
+
+You must still initialise the config, however:
+```python
+CONFIG = MyConfig(path="config.yaml")
 ```
 
 ### Access
@@ -66,6 +99,11 @@ value = config.value
 ```
 
 This can be useful if you are juggling multiple different config files dynamically.
+
+> \[!NOTE]
+>
+> This method is only recommended for subclasses, as each instance requires the same arguments.
+
 
 ## Paths
 

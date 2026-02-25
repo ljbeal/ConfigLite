@@ -33,16 +33,18 @@ class FileMixin:
         if path is not None:
             # cover the case of BaseConfig(path=["a", "b"])
             if isinstance(path, (list, tuple)):
-                self._paths.extend(path)
+                for item in path:
+                    self._paths.append(Path(item))
             else:
-                self._paths.append(path)
+                self._paths.append(Path(path))
 
         if paths is not None:
             if not isinstance(paths, (list, tuple)) or len(paths) == 0:
                 raise ValueError(
                     f"`paths` (type {type(paths)}) must be a valid list of paths"
                 )
-            self._paths.extend(paths)
+            for item in paths:
+                self._paths.append(Path(item))
 
     @property
     def filename(self) -> str:

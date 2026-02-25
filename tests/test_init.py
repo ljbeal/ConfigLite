@@ -20,9 +20,10 @@ def test_no_args() -> None:
 
 def test_path_as_list() -> None:
     """Tests that providing path as a list works."""
+    paths = ["config1.yaml", "config2.yaml"]
 
-    config = ConfigTest(path=["config1.yaml", "config2.yaml"])
-    assert config._paths == ["config1.yaml", "config2.yaml"]
+    config = ConfigTest(path=paths)  # pyright: ignore[reportArgumentType]
+    assert config._paths == [Path(p) for p in paths]
     assert config.path == Path("config2.yaml")
     assert config.filename == "config2.yaml"
 

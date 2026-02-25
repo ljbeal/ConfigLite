@@ -36,3 +36,11 @@ def test_inner_dir_access():
     assert not Path("inner").exists()
 
     assert cfg.foo == "foo"
+
+
+def test_stacked_files() -> None:
+    """Test that specifying both path and paths does not cause problems."""
+    cfg = ConfigTest(path="config.yaml", paths=["backup.yaml", "another.yaml"])
+
+    assert len(cfg._paths) == 3
+    assert cfg._paths[0] == Path("config.yaml")

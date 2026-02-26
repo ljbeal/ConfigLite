@@ -43,4 +43,11 @@ def test_stacked_files() -> None:
     cfg = ConfigTest(path="config.yaml", paths=["backup.yaml", "another.yaml"])
 
     assert len(cfg._paths) == 3
-    assert cfg._paths[0] == Path("config.yaml")
+    assert cfg.paths[0] == Path("config.yaml")
+
+    # check path list
+    assert cfg.paths == [Path(p) for p in ["config.yaml", "backup.yaml", "another.yaml"]]
+    # make sure that the paths list is exactly as specified
+    assert cfg.paths != [Path(p).resolve() for p in ["config.yaml", "backup.yaml", "another.yaml"]]
+    # also add a check to ensure we _can_ get abspaths
+    assert cfg.abspaths == [Path(p).resolve() for p in ["config.yaml", "backup.yaml", "another.yaml"]]

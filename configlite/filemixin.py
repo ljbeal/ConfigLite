@@ -61,6 +61,16 @@ class FileMixin:
         """Absolute path to the config file."""
         return self.path.resolve()
 
+    @property
+    def paths(self) -> list[Path]:
+        """List of paths, in priority order."""
+        return self._paths
+
+    @property
+    def abspaths(self) -> list[Path]:
+        """List of paths, in priority order, as abspaths."""
+        return [p.resolve() for p in self._paths]
+
     def _ensure_dir(self) -> None:
         """Ensure that the directory for the config file exists."""
         dir_path = self.path.parent

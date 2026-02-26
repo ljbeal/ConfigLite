@@ -13,7 +13,7 @@ class FileMixin:
 
     def __init__(
         self,
-        path: Path | str | list[Path | str] | None = None,
+        path: Path | str | list[Path] | list[Path] | None = None,
         paths: list[Path | str] | None = None,
     ) -> None:
         """Provides methods for handling the file portion of the config.

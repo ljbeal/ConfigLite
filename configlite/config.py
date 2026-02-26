@@ -30,8 +30,9 @@ class BaseConfig(FileMixin):
         self.data = self.defaults.copy()
         if defaults:
             self.data.update(defaults)
+            self._ensure_file_integrity(overwrite=True)
 
-        if self.path.exists():
+        elif self.path.exists():
             self._ensure_file_integrity()
 
     def __getattribute__(self, name: str) -> Any:

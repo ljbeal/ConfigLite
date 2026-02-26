@@ -67,15 +67,17 @@ class FileMixin:
         if not dir_path.exists():
             dir_path.mkdir(parents=True, exist_ok=True)
 
-    def _ensure_file_integrity(self) -> bool:
+    def _ensure_file_integrity(self, overwrite: bool = False) -> bool:
         """Ensure that all attributes are present in the config file.
+
+        Args:
+            overwrite (bool): Dump the current data to file and return immediately if True.
 
         Returns:
             bool: True if changes were made, False otherwise.
-
         """
         # if the file does not exist, we can get away with just writing the defaults
-        if not self.path.exists():
+        if not self.path.exists() or overwrite:
             self._write(data=self.data, path=self.abspath)
             return True
         file_data = self._read()

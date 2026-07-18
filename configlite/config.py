@@ -13,7 +13,7 @@ class BaseConfig(FileMixin):
 
     def __init__(
         self,
-        path: Path | str | list[Path] | list[Path] | None = None,
+        path: Path | str | list[Path] | list[str] | None = None,
         paths: list[Path | str] | None = None,
         defaults: dict[str, Any] | None = None,
     ) -> None:

@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -13,17 +13,19 @@ class FileMixin:
 
     def __init__(
         self,
-        path: Path | str | list[Path] | list[Path] | None = None,
+        path: Path | str | list[Path] | list[str] | None = None,
         paths: list[Path | str] | None = None,
+        autocreate: bool = False,
     ) -> None:
         """Provides methods for handling the file portion of the config.
 
         Args:
-            path:
-                The path to the config file. If the file does not exist, it will be created.
-            paths:
+            path (Path, str):
+                The path to the config file.
+            paths (list[Path | str]):
                 A list of paths to search for the config file.
                 If it is not found in any, the last one in the list is used for creation.
+            autocreate (bool): Ensure that the file exists at init
         """
         if not path and not paths:
             raise ValueError("Either `path` or `paths` must be provided.")

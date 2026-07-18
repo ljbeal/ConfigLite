@@ -16,17 +16,19 @@ class BaseConfig(FileMixin):
         path: Path | str | list[Path] | list[str] | None = None,
         paths: list[Path | str] | None = None,
         defaults: dict[str, Any] | None = None,
+        autocreate: bool = False,
     ) -> None:
         """Initialize the config object.
 
         Args:
-            path (str, Path): The path to the config file. If the file does not exist, it will be created.
-            paths (list[str | Path]):
+            path (str, Path): The path to the config file.
+            paths (list[Path | str]):
                 A list of paths to search for the config file.
                 If it is not found in any, the last one in the list is used for creation.
             defaults (dict): Default values for the config. Overrides any set at the class level.
+            autocreate (bool): Ensure that the file exists at init
         """
-        super().__init__(path=path, paths=paths)
+        super().__init__(path=path, paths=paths, autocreate=autocreate)
 
         # init with the hardcoded defaults
         self.data = self.defaults.copy()
@@ -36,6 +38,9 @@ class BaseConfig(FileMixin):
 
         elif self.path.exists():
             self._ensure_file_integrity()
+
+        if not self.abspath.exists() and autocreate:
+            self._ensure_file_integrity(overwrite=True)
 
         if self.prefix is not None:
             for var in os.environ:

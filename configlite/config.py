@@ -42,6 +42,7 @@ class BaseConfig(FileMixin):
         if not self.abspath.exists() and autocreate:
             self._ensure_file_integrity(overwrite=True)
 
+        self._env_overrides = {}
         if self.prefix is not None:
             for var in os.environ:
                 if not var.startswith(self.prefix):
@@ -51,7 +52,7 @@ class BaseConfig(FileMixin):
                     stripped = stripped[1:]
 
                 if stripped in self.data:
-                    self.data[stripped] = os.environ.get(var)
+                    self._env_overrides[stripped] = os.environ.get(var)
 
     def __getattribute__(self, name: str) -> Any:
         """Proxy attribute access. If the item is deferred, return the get instead."""
@@ -74,6 +75,9 @@ class BaseConfig(FileMixin):
         If the key exists within the attributes, it is read from file.
         Otherwise, the default value is returned. If no default is provided, a KeyError is raised.
         """
+        # check env overrides first
+        if key in self._env_overrides:
+            return self._env_overrides.get(key)
         # prefer file read
         if self.abspath.exists():
             self._ensure_file_integrity()

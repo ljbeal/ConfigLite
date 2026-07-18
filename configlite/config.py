@@ -42,18 +42,6 @@ class BaseConfig(FileMixin):
         if not self.abspath.exists() and autocreate:
             self._ensure_file_integrity(overwrite=True)
 
-        self._env_overrides = {}
-        if self.prefix is not None:
-            for var in os.environ:
-                if not var.startswith(self.prefix):
-                    continue
-                stripped = var.removeprefix(self.prefix)
-                if stripped.startswith("_"):
-                    stripped = stripped[1:]
-
-                if stripped in self.data:
-                    self._env_overrides[stripped] = os.environ.get(var)
-
     def __getattribute__(self, name: str) -> Any:
         """Proxy attribute access. If the item is deferred, return the get instead."""
         if (
@@ -69,6 +57,17 @@ class BaseConfig(FileMixin):
         """Proxy subscript access to read method."""
         return self.get(key)
 
+    def _get_env(self, key: str) -> str | None:
+        """Check the environment for a prefixed override.
+
+        Uses the prefix to search. For example, if we have prefix=PREFIX, and search for key="FOO",
+        Perform a check for PREFIX_FOO
+        """
+        if self.prefix is None:
+            return None
+        normalised = self.prefix if self.prefix.endswith("_") else f"{self.prefix}_"
+        return os.environ.get(f"{normalised}{key}", None)
+
     def get(self, key: str, default: Any | None = None) -> Any:
         """Expose the python `get` property.
 
@@ -76,8 +75,10 @@ class BaseConfig(FileMixin):
         Otherwise, the default value is returned. If no default is provided, a KeyError is raised.
         """
         # check env overrides first
-        if key in self._env_overrides:
-            return self._env_overrides.get(key)
+        from_env = self._get_env(key)
+        if from_env is not None:
+            return from_env
+
         # prefer file read
         if self.abspath.exists():
             self._ensure_file_integrity()

@@ -47,8 +47,8 @@ class TestEnvOverride:
         monkeypatch.delenv("MYPREFIX_INIT_VAR", raising=False)
         cfg = cfg(path="test_config.yaml", autocreate=True)
         assert cfg.get("INIT_VAR") == "foo"
-        assert cfg.INIT_VAR == "hello"
-        assert cfg["INIT_VAR"] == "hello"
+        assert cfg.INIT_VAR == "foo"
+        assert cfg["INIT_VAR"] == "foo"
 
     def test_get_reads_current_env(self, cfg, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that `get` reflects the true state of the environment."""

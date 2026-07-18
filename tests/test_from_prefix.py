@@ -24,6 +24,8 @@ class TestEnvOverride:
         monkeypatch.setenv("MYPREFIX_INIT_VAR", "hello")
         cfg = cfg(path="test_config.yaml", autocreate=True)
         assert cfg.get("INIT_VAR") == "hello"
+        assert cfg.INIT_VAR == "hello"
+        assert cfg["INIT_VAR"] == "hello"
 
     def test_missing_no_default(self, cfg, monkeypatch: pytest.MonkeyPatch) -> None:
         """Check that we're not just picking up any old variables."""
@@ -45,9 +47,13 @@ class TestEnvOverride:
         monkeypatch.delenv("MYPREFIX_INIT_VAR", raising=False)
         cfg = cfg(path="test_config.yaml", autocreate=True)
         assert cfg.get("INIT_VAR") == "foo"
+        assert cfg.INIT_VAR == "hello"
+        assert cfg["INIT_VAR"] == "hello"
 
     def test_get_reads_current_env(self, cfg, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that `get` reflects the true state of the environment."""
         cfg = cfg(path="test_config.yaml", autocreate=True)
         monkeypatch.setenv("MYPREFIX_INIT_VAR", "hello")
         assert cfg.get("INIT_VAR") == "hello"
+        assert cfg.INIT_VAR == "hello"
+        assert cfg["INIT_VAR"] == "hello"

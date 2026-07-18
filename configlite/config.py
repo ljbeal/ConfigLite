@@ -86,7 +86,7 @@ class BaseConfig(FileMixin):
             file_data = self._read()
             if key in file_data:
                 return file_data[key]
-            if default:
+            if default is not None:
                 return default
         # fallback to internal data
         if key in self.data:

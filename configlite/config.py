@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Any
 
@@ -8,6 +9,7 @@ class BaseConfig(FileMixin):
     """Lightweight Self-Healing config object."""
 
     defaults: dict[str, Any] = {}
+    prefix: str | None = None
 
     def __init__(
         self,
@@ -34,6 +36,17 @@ class BaseConfig(FileMixin):
 
         elif self.path.exists():
             self._ensure_file_integrity()
+
+        if self.prefix is not None:
+            for var in os.environ:
+                if not var.startswith(self.prefix):
+                    continue
+                stripped = var.removeprefix(self.prefix)
+                if stripped.startswith("_"):
+                    stripped = stripped[1:]
+
+                if stripped in self.data:
+                    self.data[stripped] = os.environ.get(var)
 
     def __getattribute__(self, name: str) -> Any:
         """Proxy attribute access. If the item is deferred, return the get instead."""

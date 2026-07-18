@@ -16,7 +16,7 @@ class BaseConfig(FileMixin):
         path: Path | str | list[Path] | list[str] | None = None,
         paths: list[Path | str] | None = None,
         defaults: dict[str, Any] | None = None,
-        autocreate: bool = False,
+        autocreate: bool = True,
     ) -> None:
         """Initialize the config object.
 

@@ -7,10 +7,10 @@ class MyConfig(BaseConfig):
     defaults = {"foo": "bar"}
 
 
-def test_no_file_on_init() -> None:
-    """Check that simply initialising a config does not create a file instantly."""
+def test_file_on_init() -> None:
+    """Check that initialising a config does create a file instantly."""
     file = Path("test.yaml")
     my_config = MyConfig(path=file)
 
-    assert not file.exists()
+    assert file.exists()
     assert my_config.path == file

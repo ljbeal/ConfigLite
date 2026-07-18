@@ -15,7 +15,7 @@ class FileMixin:
         self,
         path: Path | str | list[Path] | list[str] | None = None,
         paths: list[Path | str] | None = None,
-        autocreate: bool = False,
+        autocreate: bool = True,
     ) -> None:
         """Provides methods for handling the file portion of the config.
 

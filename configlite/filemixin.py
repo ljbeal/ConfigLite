@@ -59,6 +59,11 @@ class FileMixin:
         return self._find_path()
 
     @property
+    def backup_path(self) -> Path:
+        """Path to the backup file used during healing."""
+        return Path(self.path.name + ".bk")
+
+    @property
     def abspath(self) -> Path:
         """Absolute path to the config file."""
         return self.path.resolve()
@@ -133,13 +138,12 @@ class FileMixin:
             return data
         # In the case of a broken file, back it up and create a default one
         target_path = self.path
-        backup_name = f"{self.filename}.bk"
         print(
-            f"WARNING: Config file {target_path} failed to load.\n\tBacking up the file to: {backup_name}...",
+            f"WARNING: Config file {target_path} failed to load.\n\tBacking up the file to: {self.backup_path}...",
             end=" ",
         )
         try:
-            shutil.move(target_path, backup_name)
+            shutil.move(target_path, self.backup_path)
         except:
             print("Error.")
             raise

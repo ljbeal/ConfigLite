@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from configlite.filemixin import FileMixin
 
@@ -8,7 +8,7 @@ from configlite.filemixin import FileMixin
 class BaseConfig(FileMixin):
     """Lightweight Self-Healing config object."""
 
-    defaults: dict[str, Any] = {}
+    defaults: ClassVar[dict[str, Any]] = {}
     prefix: str | None = None
 
     def __init__(

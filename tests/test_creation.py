@@ -1,10 +1,11 @@
 from pathlib import Path
+from typing import ClassVar
 
 from configlite.config import BaseConfig
 
 
 class MyConfig(BaseConfig):
-    defaults = {"foo": "bar"}
+    defaults: ClassVar[dict] = {"foo": "bar"}
 
 
 def test_file_on_init() -> None:

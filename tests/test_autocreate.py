@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import ClassVar
 
 import yaml
 
@@ -7,7 +8,7 @@ from tests.conftest import verify_variable
 
 
 class ConfigTest(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "foo": "foo",
     }
 

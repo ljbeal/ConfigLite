@@ -1,16 +1,14 @@
+from typing import ClassVar
+
 from configlite.config import BaseConfig
 from tests.conftest import verify_variable
 
 
 class Config(BaseConfig):
-    defaults = {
-        "foo": "foo"
-    }
+    defaults: ClassVar[dict] = {"foo": "foo"}
 
 
-CONFIG = {
-    "foo": "bar"
-}
+CONFIG = {"foo": "bar"}
 
 
 def test_update_when_file() -> None:

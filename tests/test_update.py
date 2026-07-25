@@ -1,13 +1,16 @@
+from typing import ClassVar
+
 from configlite.config import BaseConfig
 
 
 class ConfigA(BaseConfig):
-    defaults = {"param1": "value1"}
+    defaults: ClassVar[dict] = {"param1": "value1"}
 
 
 class ConfigB(BaseConfig):
     """Simulate updating the config to include a new parameter."""
-    defaults = {
+
+    defaults: ClassVar[dict] = {
         "param1": "value1",
         "param2": "value2",
     }

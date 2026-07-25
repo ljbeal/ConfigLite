@@ -1,17 +1,19 @@
+from typing import ClassVar
+
 import pytest
 
 from configlite import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "INIT_VAR": "foo",
     }
     prefix = "MYPREFIX"
 
 
 class ConfigTestUnderscore(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "INIT_VAR": "foo",
     }
     prefix = "MYPREFIX_"

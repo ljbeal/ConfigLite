@@ -1,7 +1,7 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import yaml
 
@@ -9,7 +9,7 @@ import yaml
 class FileMixin:
     """Mixin class for handling file operations."""
 
-    data = {}
+    data: ClassVar[dict] = {}
 
     def __init__(
         self,

@@ -1,9 +1,12 @@
+from typing import ClassVar
+
 import pytest
+
 from configlite.config import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    defaults = {"foo": "foo"}
+    defaults: ClassVar[dict] = {"foo": "foo"}
 
 
 def test_attribute_access():

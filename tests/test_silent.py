@@ -1,8 +1,10 @@
+from typing import ClassVar
+
 from configlite.config import BaseConfig
 
 
 class Config(BaseConfig):
-    defaults = {"foo": "foo"}
+    defaults: ClassVar[dict] = {"foo": "foo"}
 
 
 def test_silent(capsys) -> None:

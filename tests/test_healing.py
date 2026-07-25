@@ -1,5 +1,5 @@
-import os
 from pathlib import Path
+from typing import ClassVar
 
 import yaml
 
@@ -9,7 +9,7 @@ from .conftest import verify_variable
 
 
 class ConfigTest(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "foo": "foo",
         "val": 10,
     }
@@ -93,13 +93,13 @@ def test_remove_variable():
     """Test that modifying the config updates the file correctly."""
 
     class ConfigTest_1(BaseConfig):
-        defaults = {
+        defaults: ClassVar[dict] = {
             "foo": "foo",
             "bar": "bar",
         }
 
     class ConfigTest_2(BaseConfig):
-        defaults = {
+        defaults: ClassVar[dict] = {
             "foo": "foo",
         }
 
@@ -117,12 +117,12 @@ def test_modify_variable():
     """Test that modifying the config updates the file correctly."""
 
     class ConfigTest_1(BaseConfig):
-        defaults = {
+        defaults: ClassVar[dict] = {
             "foo": "foo",
         }
 
     class ConfigTest_2(BaseConfig):
-        defaults = {
+        defaults: ClassVar[dict] = {
             "foo": "foo",
             "new": "new_value",
         }

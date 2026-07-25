@@ -1,6 +1,8 @@
 from pathlib import Path
-from configlite import BaseConfig
+
 import yaml
+
+from configlite import BaseConfig
 
 
 class MyConfig(BaseConfig):

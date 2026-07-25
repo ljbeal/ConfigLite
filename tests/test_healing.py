@@ -1,13 +1,15 @@
-import os
 from pathlib import Path
+from typing import ClassVar
 
 import yaml
+
 from configlite.config import BaseConfig
+
 from .conftest import verify_variable
 
 
 class ConfigTest(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "foo": "foo",
         "val": 10,
     }
@@ -24,7 +26,7 @@ def test_restore_file(capsys):
     assert config.foo == "foo"
     assert config.val == 10
 
-    assert os.path.exists(f"{file}.bk")
+    assert config.backup_path.exists()
     assert "WARNING" in capsys.readouterr().out
 
     assert verify_variable(file, "foo", "foo")
@@ -42,10 +44,11 @@ def test_restore_file_priority(capsys):
     assert config.foo == "foo"
     assert config.val == 10
 
-    assert os.path.exists(f"{file_a}.bk")
+    assert config.backup_path.exists()
     assert "WARNING" in capsys.readouterr().out
 
     assert verify_variable(file_a, "foo", "foo")
+
 
 def test_mangled_file(capsys):
     file = Path("test.yaml")
@@ -58,7 +61,7 @@ def test_mangled_file(capsys):
     assert config.foo == "foo"
     assert config.val == 10
 
-    assert os.path.exists(f"{file}.bk")
+    assert config.backup_path.exists()
     assert "WARNING" in capsys.readouterr().out
 
 
@@ -88,14 +91,15 @@ def test_delete_variable():
 
 def test_remove_variable():
     """Test that modifying the config updates the file correctly."""
+
     class ConfigTest_1(BaseConfig):
-        defaults = {
+        defaults: ClassVar[dict] = {
             "foo": "foo",
             "bar": "bar",
         }
 
     class ConfigTest_2(BaseConfig):
-        defaults = {
+        defaults: ClassVar[dict] = {
             "foo": "foo",
         }
 
@@ -111,13 +115,14 @@ def test_remove_variable():
 
 def test_modify_variable():
     """Test that modifying the config updates the file correctly."""
+
     class ConfigTest_1(BaseConfig):
-        defaults = {
+        defaults: ClassVar[dict] = {
             "foo": "foo",
         }
 
     class ConfigTest_2(BaseConfig):
-        defaults = {
+        defaults: ClassVar[dict] = {
             "foo": "foo",
             "new": "new_value",
         }
@@ -129,3 +134,11 @@ def test_modify_variable():
     cfg = ConfigTest_2("test.yaml")
     assert verify_variable(cfg.path, "foo", "foo")
     assert verify_variable(cfg.path, "new", "new_value")
+
+
+def test_no_immediate_backup() -> None:
+    """Tests that creating a config does not create a backup file immediately."""
+    file = Path("config.yaml")
+    cfg = ConfigTest(path=file)
+
+    assert not cfg.backup_path.exists()

@@ -1,8 +1,10 @@
+from typing import ClassVar
+
 from configlite.config import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "test_value": 42,
         "name": "Test_Name",
     }

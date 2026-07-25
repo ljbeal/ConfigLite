@@ -1,15 +1,18 @@
+from typing import ClassVar
+
 import pytest
+
 from configlite.config import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "foo": "foo",
     }
 
 
 class ConfigWithMethods(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "foo": "foo",
     }
 
@@ -18,7 +21,7 @@ class ConfigWithMethods(BaseConfig):
 
 
 class ConfigWithProperty(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "foo": "foo",
     }
 
@@ -33,7 +36,7 @@ class ConfigWithProperty(BaseConfig):
         ConfigTest,
         ConfigWithMethods,
         ConfigWithProperty,
-    ]
+    ],
 )
 def test_attributes(config_class) -> None:
     """Tests that the attributes property returns the correct list of attributes."""

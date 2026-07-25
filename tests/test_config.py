@@ -1,11 +1,15 @@
-from configlite.config import BaseConfig
+from typing import ClassVar
+
 import yaml
+
+from configlite.config import BaseConfig
 
 
 class ConfigTest(BaseConfig):
-    defaults = {
+    defaults: ClassVar[dict] = {
         "test": "foo",
     }
+
 
 def test_ensure_empty() -> None:
     assert BaseConfig("test.yaml").attributes == []
@@ -13,7 +17,7 @@ def test_ensure_empty() -> None:
 
 def test_attributes() -> None:
     class TestConfig(BaseConfig):
-        defaults = {"test": 10}
+        defaults: ClassVar[dict] = {"test": 10}
 
     assert TestConfig("test.yaml").attributes == ["test"]
 
